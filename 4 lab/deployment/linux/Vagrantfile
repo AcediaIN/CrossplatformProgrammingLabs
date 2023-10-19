@@ -1,0 +1,49 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "ubuntu/trusty64"
+
+  config.vm.network "forwarded_port", guest: 5000, host: 5000
+  config.vm.provider "virtualbox" do |vb|
+     vb.gui = false
+     vb.memory = "1024"
+     vb.name = "INazaruk_linux"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y apt-transport-https
+
+      wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+      sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+  
+      wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+      sudo dpkg -i packages-microsoft-prod.deb
+      rm packages-microsoft-prod.deb
+
+      sudo apt-get update && \
+        sudo apt-get install -y dotnet-sdk-7.0
+
+      echo 'export PATH=$PATH:$HOME/.dotnet/tools' >> /home/vagrant/.bash_profile
+      su - vagrant -c "dotnet nuget add source http://10.0.2.2:5000/v3/index.json"
+      su - vagrant -c "dotnet tool install -g INazaruk --version 1.0.0 --ignore-failed-sources"
+
+      cd ~
+      touch input.txt && echo 1 1 2 >> input1.txt
+      touch input1.txt && echo 1 1 2 >> input1.txt
+      touch input2.txt && echo 4 >> input1.txt
+      touch input3.txt && echo "3
+      p1
+      2
+      p1
+      p2
+      *****
+      p2
+      1
+      p1
+      *****
+      p3
+      1
+      p1
+      *****" >> input1.txt
+  SHELL
+end
