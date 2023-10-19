@@ -27,23 +27,5 @@ Vagrant.configure("2") do |config|
       su - vagrant -c "dotnet nuget add source http://10.0.2.2:5000/v3/index.json"
       su - vagrant -c "dotnet tool install -g INazaruk --version 1.0.0 --ignore-failed-sources"
 
-      cd ~
-      touch input.txt && echo 1 1 2 >> input1.txt
-      touch input1.txt && echo 1 1 2 >> input1.txt
-      touch input2.txt && echo 4 >> input1.txt
-      touch input3.txt && echo "3
-      p1
-      2
-      p1
-      p2
-      *****
-      p2
-      1
-      p1
-      *****
-      p3
-      1
-      p1
-      *****" >> input1.txt
   SHELL
 end
